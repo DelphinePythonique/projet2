@@ -4,13 +4,17 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
+version: 0.0.1
+
 ## Sommaire
 
 [installation](#installation)
 
-[utitlisation](#utilisation)
+[utilisation](#utilisation)
 
 [Feuille de route](#route)
+
+[Changelog](#changelog)
 
 ------------
 ### <a name="installation"></a>Installation
@@ -55,3 +59,5 @@ choisie,**
 - [ ] Pour chaque catégorie, écrire les informations dans un fichier CSV
 
 *Télécharger et enregistrer le fichier image de chaque produit*
+
+### <a name="Changelog"></a>Changelog
