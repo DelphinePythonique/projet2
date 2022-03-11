@@ -6,9 +6,9 @@
 
 ## Sommaire
 
-[Feuille de route](#route)
+[installation](#installation)
 
-[Feuille de route](#route)
+[utitlisation](#utilisation)
 
 [Feuille de route](#route)
 
@@ -54,4 +54,4 @@ choisie,**
 - [ ] Extraire les informations
 - [ ] Pour chaque catégorie, écrire les informations dans un fichier CSV
 
-* Télécharger et enregistrer le fichier image de chaque produit
+*Télécharger et enregistrer le fichier image de chaque produit*
