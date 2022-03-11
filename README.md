@@ -10,6 +10,15 @@ version: 0.1.0
 
 [Installation](#installation)
 
+[Utilisation](#utilisation)
+
+[Feuille de route](#route)
+
+[Changelog](#changelog)
+
+------------
+### <a name="installation"></a>Installation
+
 Cette installation concerne un environnement de développement.
 
 Pré-requis: 
@@ -29,30 +38,25 @@ Via un terminal :
  git clone git@github.com:DelphinePythonique/projet2.git
 ```
 
-- Se positionner dans le répertoire du projet, et créer un environnement virtuel
+- Se positionner dans le répertoire du projet, créer et activer un environnement virtuel
 ``` bash
  cd projet
  python -m venv env
+ source env/bin/activate
 ```
 - Installer les packages python utiles au script
 ``` bash
  pip install -r requirements.txt 
 ```
 
-[Utilisation](#utilisation)
-
-[Feuille de route](#route)
-
-[Changelog](#changelog)
-
-------------
-### <a name="installation"></a>Installation
-
-[A écrire]
 
 ### <a name="utilisation"></a>Utilisation
 
-[A écrire]
+Extraction des informations du livre Soumission
+``` bash
+ pip install -r requirements.txt 
+```
+
 
 ### <a name="route"></a> Feuille de Route
 #### Etape 1 :Récupération, à la demande, des prix pratiqués
