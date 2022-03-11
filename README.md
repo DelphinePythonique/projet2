@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 0.1.0
+version: 0.1.2
 
 ## Sommaire
 
@@ -54,7 +54,7 @@ Via un terminal :
 
 Extraction des informations du livre Soumission
 ``` bash
- pip install -r requirements.txt 
+ python script.py
 ```
 
 
