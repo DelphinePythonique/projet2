@@ -4,13 +4,42 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 0.0.1
+version: 0.0.2
 
 ## Sommaire
 
-[installation](#installation)
+[Installation](#installation)
 
-[utilisation](#utilisation)
+Cette installation concerne un environnement de développement.
+
+Pré-requis: 
+
+- \>= python3,9
+
+Via un terminal : 
+
+- Se positionner dans le répertoire local dans lequel vous voulez positionner les sources de l'application
+``` bash
+ cd [chemin_vers_mon_repertoire_de_sources]
+```
+-  Cloner le dépot via la commande clone en mode ssh
+[ssh](https://docs.github.com/en/authentication/connecting-to-github-with-ssh), via la commande suivante
+
+``` bash
+ git clone git@github.com:DelphinePythonique/projet2.git
+```
+
+- Se positionner dans le répertoire du projet, et créer un environnement virtuel
+``` bash
+ cd projet
+ python -m venv env
+```
+- Installer les packages python utiles au script
+``` bash
+ pip install -r requirements.txt 
+```
+
+[Utilisation](#utilisation)
 
 [Feuille de route](#route)
 
