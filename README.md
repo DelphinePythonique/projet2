@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 0.0.2
+version: 0.1.0
 
 ## Sommaire
 
@@ -59,7 +59,7 @@ Via un terminal :
 Nous procéderons en plusieurs itérations :
 
 *Extraction d'un livre*
-- [ ] **Extraire les informations concernant un seul livre**: 
+- [X] **Extraire les informations concernant un seul livre**: 
      - product_page_url
      - universal_ product_code (upc)
      - title 
