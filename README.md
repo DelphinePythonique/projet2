@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 0.1.2
+version: 1.0.0
 
 ## Sommaire
 
@@ -94,3 +94,6 @@ choisie,**
 *Télécharger et enregistrer le fichier image de chaque produit*
 
 ### <a name="Changelog"></a>Changelog
+
+- v1.0.0: extraction des informations du livre de l'url 
+"http://books.toscrape.com/catalogue/soumission_998/index.html"
