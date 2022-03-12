@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 1.1.0
+version: 1.1.1
 
 ## Sommaire
 
@@ -52,11 +52,19 @@ Via un terminal :
 
 ### <a name="utilisation"></a>Utilisation
 
-Extraction des informations du livre Soumission
+#### Extraction des informations d'un livre
 ``` bash
  python script.py
 ```
+Saisir l'url de la page du livre à extraire
 
+L'élément renvoyé est un tuple composé: 
+- status de l'extraction : 
+  - 000: déroulement ok
+  - 001: extraction ko à cause d'un format de page ne correspondant pas 
+à l'attendu
+  - 002: page inaccessible
+- d'un dictionnaire composé des informations du livre
 
 ### <a name="route"></a> Feuille de Route
 #### Etape 1 :Récupération, à la demande, des prix pratiqués
@@ -79,13 +87,13 @@ correspondront aux en-têtes de colonnes.
 
 *Extraction des livres d'une catégorie*
 
-- [ ] **Extraire les urls des livres attachés à une catégorie, présent 
+- [ ] **extraire les urls des livres attachés à une catégorie, présent 
 sur une page catégorie**
-- [ ] **Extraire les urls des livres attachés à une catégorie, présent 
+- [ ] **extraire les urls des livres attachés à une catégorie, présent 
 sur l'ensemble des pages concernées par la catégorie**
 - [ ] **extraire les données produit de tous les livres de la catégorie 
 choisie,** 
-- [ ] **Ecrire ces informations dans un seul fichier CSV**
+- [ ] **écrire ces informations dans un seul fichier CSV**
 
 *Extraction de l'ensemble des catégories puis des livres associés*
 - [ ] Extraire les informations
