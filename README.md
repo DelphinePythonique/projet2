@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 1.1.1
+version: 1.2.0
 
 ## Sommaire
 
@@ -82,7 +82,7 @@ Nous procéderons en plusieurs itérations :
      - category
      - review_rating
      - image_url
-- [ ] **Ecrire ces informations dans un fichier CSV**; les champs ci-dessus
+- [X] **Ecrire ces informations dans un fichier CSV**; les champs ci-dessus
 correspondront aux en-têtes de colonnes.
 
 *Extraction des livres d'une catégorie*
@@ -106,3 +106,4 @@ choisie,**
 - v1.0.0: extraction des informations du livre de l'url 
 "http://books.toscrape.com/catalogue/soumission_998/index.html"
 - v1.1.0: Ajout d'un prompt pour selectionner une page d'une livre à extraire
+- v1.2.0: Export csv des informations du livre
