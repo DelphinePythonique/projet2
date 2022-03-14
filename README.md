@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 1.2.0
+version: 1.3.0
 
 ## Sommaire
 
@@ -56,15 +56,12 @@ Via un terminal :
 ``` bash
  python script.py
 ```
-Saisir l'url de la page du livre à extraire
-
-L'élément renvoyé est un tuple composé: 
-- status de l'extraction : 
-  - 000: déroulement ok
-  - 001: extraction ko à cause d'un format de page ne correspondant pas 
-à l'attendu
-  - 002: page inaccessible
-- d'un dictionnaire composé des informations du livre
+*Extraire les informations d'un livre*
+A l'invite de commande, saisir 1 pour générer un fichier CSV avec les informations d'un livre
+puis saisir l'url du livre
+*Extraire les informations des livres d'une catégorie*
+A l'invite de commande, saisir 2 pour générer un fichier CSV avec les informations des livres
+d'une catégorie puis saisir l'url de la catégorie
 
 ### <a name="route"></a> Feuille de Route
 #### Etape 1 :Récupération, à la demande, des prix pratiqués
@@ -87,13 +84,13 @@ correspondront aux en-têtes de colonnes.
 
 *Extraction des livres d'une catégorie*
 
-- [ ] **extraire les urls des livres attachés à une catégorie, présent 
+- [X] **extraire les urls des livres attachés à une catégorie, présent 
 sur une page catégorie**
-- [ ] **extraire les urls des livres attachés à une catégorie, présent 
+- [X] **extraire les urls des livres attachés à une catégorie, présent 
 sur l'ensemble des pages concernées par la catégorie**
-- [ ] **extraire les données produit de tous les livres de la catégorie 
-choisie,** 
-- [ ] **écrire ces informations dans un seul fichier CSV**
+- [X] **extraire les données produit de tous les livres de la catégorie 
+choisie ** 
+- [X] **écrire ces informations dans un seul fichier CSV**
 
 *Extraction de l'ensemble des catégories puis des livres associés*
 - [ ] Extraire les informations
@@ -107,3 +104,4 @@ choisie,**
 "http://books.toscrape.com/catalogue/soumission_998/index.html"
 - v1.1.0: Ajout d'un prompt pour selectionner une page d'une livre à extraire
 - v1.2.0: Export csv des informations du livre
+- v1.3.0: Export csv des informations des livres d'une catégorie
