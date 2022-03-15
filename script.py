@@ -38,13 +38,18 @@ def extract_info_livre(url):
             livre['price_excluding_tax'] = soup.find('th', string='Price (excl. tax)').find_next_sibling('td').string
             livre['number_available'] = soup.find('th', string='Availability').find_next_sibling('td').string
             livre['category'] = soup.find('ul', class_="breadcrumb").findAll("li")[-2].find("a").string
-            livre['description'] = soup.find(id='product_description').find_next_sibling('p').string
+            if soup.find(id='product_description'):
+                livre['description'] = soup.find(id='product_description').find_next_sibling('p').string
+            else:
+                livre['description'] = ""
+
             livre['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
             livre['image_url'] = soup.find('div', class_='thumbnail').find('img')['src'].replace('../..', domaine)
         except AttributeError as exc:
             livre = {}
             raise ValueError("001:[extraction informations d'un livre]cette erreur se produit soit parce que l'url "
-                             "de la page à extraire est erronée et/ou ne concerne pas une page livre")
+                             "de la page à extraire est erronée et/ou ne concerne pas une page livre."
+                             " detail de l'erreur" + exc)
     else:
         raise ValueError("002:[extraction informations d'un livre]cette erreur se produit au moment de l'extraction "
                          "d'une page de type livre; la page demandée n'est pas accessible")
@@ -54,7 +59,7 @@ def extract_info_livre(url):
 
 
 def extraire_urls_livres_par_categorie(url):
-    print("[DEBUT]extract_urls_livre_par_catégorie:", url)
+
     def reforme_url(url, num_page):
         url_split = url.split('/')
         url_split = url_split[0:7]
@@ -63,9 +68,10 @@ def extraire_urls_livres_par_categorie(url):
         return url
 
     num_page = 1
-    url_reforme = reforme_url(url, num_page)
+
     urls_livres = []
-    page = requests.get(url_reforme)
+    page = requests.get(url)
+    print("[DEBUT]extract_urls_livre_par_catégorie:", url)
     if not page.ok:
         raise ValueError("004:[extraction urls des livres d'une page categorie]cette erreur se produit au moment"
                          " de l'extraction d'une page de type livre; la page demandée n'est pas accessible")
@@ -99,6 +105,32 @@ def extract_info_livres_par_categorie(url_categorie):
     return livres
 
 
+def extract_urls_categorie(domaine):
+
+    page = requests.get(domaine)
+    if page.ok:
+        print("[DEBUT]export urls des categories à partir de l'url", domaine)
+        soup = BeautifulSoup(page.content, "html.parser")
+        links = soup.find('div', class_="side_categories").find_all('a')
+        links.pop(0)#suppression de la catégorie parent Books
+        urls_categorie = []
+        for link in links:
+            urls_categorie.append(domaine+link['href'])
+        print("[FIN]export urls des catégories à partir de l'url", domaine, "de ", len(urls_categorie), " catégories")
+        return urls_categorie
+    else:
+        raise ValueError("005:[extraction urls des categories]cette erreur se produit car la page demandée "
+                         "n'est pas accessible")
+
+
+def extract_all(domaine):
+    print("[DEBUT]extraction intégral de:", domaine)
+    urls_categorie = extract_urls_categorie(domaine)
+    for url in urls_categorie:
+        livres = extract_info_livres_par_categorie(url)
+        export_csv(livres)
+    print("[FIN]extraction intégral de:", domaine)
+
 def export_csv(livres):
     if len(livres) > 0:
 
@@ -128,11 +160,15 @@ livres = extract_info_livres_par_categorie(url)
 export_csv(livres)
 print(len(livres))
 '''
+
 try:
-    print("Saisir 1 pour extraire les informations d'un livre et 2 pour les informations d'une catégorie, laisser vide"
-          "pour quitter")
+    print("Saisir : \n "
+          "1 pour extraire les informations d'un livre \n "
+          "2 pour les informations d'une catégorie, laisser vide\n "
+          "3 pour extraire l'ensemble des livres par catégorie \n"
+          " tout autre saisie permettra de quitter")
     choix = input()
-    if choix in ["1", "2"]:
+    if choix in ["1", "2", "3"]:
         url = -1
         while url:
             print(
@@ -152,6 +188,8 @@ try:
                 elif choix == "2":
                     livres = extract_info_livres_par_categorie(url)
                     export_csv(livres)
+                elif choix == "3":
+                    extract_all(url)
 
 except ValueError as exc:
     print(exc)

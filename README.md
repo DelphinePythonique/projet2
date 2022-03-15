@@ -56,12 +56,15 @@ Via un terminal :
 ``` bash
  python script.py
 ```
-*Extraire les informations d'un livre*
+- *Extraire les informations d'un livre*
 A l'invite de commande, saisir 1 pour générer un fichier CSV avec les informations d'un livre
 puis saisir l'url du livre
-*Extraire les informations des livres d'une catégorie*
+- *Extraire les informations des livres d'une catégorie*
 A l'invite de commande, saisir 2 pour générer un fichier CSV avec les informations des livres
-d'une catégorie puis saisir l'url de la catégorie
+d'une catégorie puis saisir l'url de la catégorie.
+- *Extraire les informations des livres de l'ensemble des catégories*
+A l'invite de commande, saisir 3 pour générer un fichier CSV par catégorie avec les informations des livres
+de la catégorie puis saisir l'url du site
 
 ### <a name="route"></a> Feuille de Route
 #### Etape 1 :Récupération, à la demande, des prix pratiqués
@@ -89,12 +92,12 @@ sur une page catégorie**
 - [X] **extraire les urls des livres attachés à une catégorie, présent 
 sur l'ensemble des pages concernées par la catégorie**
 - [X] **extraire les données produit de tous les livres de la catégorie 
-choisie ** 
+choisie** 
 - [X] **écrire ces informations dans un seul fichier CSV**
 
 *Extraction de l'ensemble des catégories puis des livres associés*
-- [ ] Extraire les informations
-- [ ] Pour chaque catégorie, écrire les informations dans un fichier CSV
+- [X] Extraire les informations
+- [X] Pour chaque catégorie, écrire les informations dans un fichier CSV
 
 *Télécharger et enregistrer le fichier image de chaque produit*
 
@@ -105,3 +108,4 @@ choisie **
 - v1.1.0: Ajout d'un prompt pour selectionner une page d'une livre à extraire
 - v1.2.0: Export csv des informations du livre
 - v1.3.0: Export csv des informations des livres d'une catégorie
+- v1.4.0: Extraction de l'ensemble des catégories du site et les livres liés.
