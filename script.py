@@ -1,5 +1,5 @@
 import os
-import sys
+import shutil
 
 import requests
 from bs4 import BeautifulSoup
@@ -59,7 +59,6 @@ def extract_info_livre(url):
 
 
 def extraire_urls_livres_par_categorie(url):
-
     def reforme_url(url, num_page):
         url_split = url.split('/')
         url_split = url_split[0:7]
@@ -106,16 +105,15 @@ def extract_info_livres_par_categorie(url_categorie):
 
 
 def extract_urls_categorie(domaine):
-
     page = requests.get(domaine)
     if page.ok:
         print("[DEBUT]export urls des categories à partir de l'url", domaine)
         soup = BeautifulSoup(page.content, "html.parser")
         links = soup.find('div', class_="side_categories").find_all('a')
-        links.pop(0)#suppression de la catégorie parent Books
+        links.pop(0)  # suppression de la catégorie parent Books
         urls_categorie = []
         for link in links:
-            urls_categorie.append(domaine+link['href'])
+            urls_categorie.append(domaine + link['href'])
         print("[FIN]export urls des catégories à partir de l'url", domaine, "de ", len(urls_categorie), " catégories")
         return urls_categorie
     else:
@@ -130,6 +128,7 @@ def extract_all(domaine):
         livres = extract_info_livres_par_categorie(url)
         export_csv(livres)
     print("[FIN]extraction intégral de:", domaine)
+
 
 def export_csv(livres):
     if len(livres) > 0:
@@ -147,9 +146,36 @@ def export_csv(livres):
             for livre in livres:
                 ligne = list(livre.values())
                 writer.writerow(ligne)
-        print("[FIN]export: de ", len(livres), "livre(s) dont le dernier est :", livres[len(livres)-1])
+        print("[FIN]export: de ", len(livres), "livre(s) dont le dernier est :", livres[len(livres) - 1])
     else:
         print("[WARNING] Aucun livre à exporter")
+
+
+def telecharger_image(url, path, nom_fichier):
+    print("[DEBUT]Télécharger image  ", url, "chemin", path, "nom fichier ", nom_fichier)
+    pathExist = os.path.exists(path)
+    if not pathExist:
+        os.makedirs(path)
+    page = requests.get(url, stream=True)
+    if page.ok:
+        page.raw.decode_content = True
+
+        with open(path + nom_fichier, 'wb') as f:
+            shutil.copyfileobj(page.raw, f)
+    print("[FIN]Télécharger image  ", url, "chemin", path, "nom fichier ", nom_fichier)
+
+
+def telecharger_images():
+    path = "data"
+    files = os.listdir(path)
+    for file in files:
+        if file.endswith('.csv'):
+            with open(path+"/"+file) as fichier_csv:
+                DictReader = csv.DictReader(fichier_csv, delimiter=",")
+                for row in DictReader:
+                    url = row['image_url']
+                    nom_fichier_a_telecharger = row['upc']+".jpg"
+                    telecharger_image(url, "data/images/", nom_fichier_a_telecharger)
 
 
 livres = []
@@ -166,6 +192,7 @@ try:
           "1 pour extraire les informations d'un livre \n "
           "2 pour les informations d'une catégorie, laisser vide\n "
           "3 pour extraire l'ensemble des livres par catégorie \n"
+          "4 pour télécharger les images des livres présents dans les fichiers CSV\n"
           " tout autre saisie permettra de quitter")
     choix = input()
     if choix in ["1", "2", "3"]:
@@ -190,6 +217,8 @@ try:
                     export_csv(livres)
                 elif choix == "3":
                     extract_all(url)
+    if choix == "4":
+       telecharger_images()
 
 except ValueError as exc:
     print(exc)

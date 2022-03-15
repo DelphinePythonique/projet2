@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 1.3.1
+version: 1.5.0
 
 ## Sommaire
 
@@ -100,6 +100,8 @@ choisie**
 - [X] Pour chaque catégorie, écrire les informations dans un fichier CSV
 
 *Télécharger et enregistrer le fichier image de chaque produit*
+- [x] Télécharger et enregitrer une image
+- [x] Télécharger et enregistrer l'ensemble des images
 
 ### <a name="Changelog"></a>Changelog
 
@@ -109,3 +111,4 @@ choisie**
 - v1.2.0: Export csv des informations du livre
 - v1.3.0: Export csv des informations des livres d'une catégorie
 - v1.4.0: Extraction de l'ensemble des catégories du site et les livres liés.
+- v1.5.0: Télécharger et enregistrer le fichier image de chaque produit
