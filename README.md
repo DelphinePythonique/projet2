@@ -65,6 +65,8 @@ d'une catégorie puis saisir l'url de la catégorie.
 - *Extraire les informations des livres de l'ensemble des catégories*
 A l'invite de commande, saisir 3 pour générer un fichier CSV par catégorie avec les informations des livres
 de la catégorie puis saisir l'url du site
+- *Télécharger et enregistrer les images des livres*
+A l'invite de commande, saisir 4
 
 ### <a name="route"></a> Feuille de Route
 #### Etape 1 :Récupération, à la demande, des prix pratiqués
