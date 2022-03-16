@@ -1,3 +1,4 @@
+import argparse
 import os
 import shutil
 
@@ -15,10 +16,8 @@ x title
 x number_available
 x product_description
 x category
-review_rating
-image_url
-
-
+x review_rating
+x image_url
 """
 domaine = 'http://books.toscrape.com'
 
@@ -47,9 +46,10 @@ def extract_info_livre(url):
             livre['image_url'] = soup.find('div', class_='thumbnail').find('img')['src'].replace('../..', domaine)
         except AttributeError as exc:
             livre = {}
-            raise ValueError("001:[extraction informations d'un livre]cette erreur se produit soit parce que l'url "
-                             "de la page à extraire est erronée et/ou ne concerne pas une page livre."
-                             " detail de l'erreur" + exc)
+            raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
+                             "soit parce que l'url de la page à extraire est erronée\n "
+                             "et/ou ne concerne pas une page livre.\n "
+                             "Detail de l'erreur:" + str(exc))
     else:
         raise ValueError("002:[extraction informations d'un livre]cette erreur se produit au moment de l'extraction "
                          "d'une page de type livre; la page demandée n'est pas accessible")
@@ -179,46 +179,49 @@ def telecharger_images():
 
 
 livres = []
-'''
-# url = "http://books.toscrape.com/catalogue/soumission_998/index.html"
-url = "http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
-livres = extract_info_livres_par_categorie(url)
-export_csv(livres)
-print(len(livres))
-'''
+
+parser = argparse.ArgumentParser(description="exporter les informations concernant les livres du site "
+                                             "http://books.toscrape.com/")
+parser.add_argument("--csv", action="store_true",help="Export les informations dans un fichier CSV présent dans data")
+parser.add_argument("--url", help="Indiquer l'url de la page à partir de laquelle exporter les informations")
+parser.add_argument("--images", action="store_true", help="Télécharge et enregistre les images dans data/images")
+parser.add_argument("--impact", choices=['livre', 'cat', 'tout'],
+                              help="Extrait les informations d'un livre avec type=livre "
+                                   "ou d'une categorie type=cat, "
+                                   "ou de l'ensemble des livres avec type=tout; tout génère automatiquement les CSV")
+
+args = parser.parse_args()
+
+if args.url and (args.impact is None):
+    parser.error("--url requiert --impact.")
+
+if args.csv and (args.impact is None or args.url is None):
+    parser.error("--csv requiert --impact et --url.")
+
+if args.impact and (args.url is None ):
+    parser.error("--impact requiert --url.")
 
 try:
-    print("Saisir : \n "
-          "1 pour extraire les informations d'un livre \n "
-          "2 pour les informations d'une catégorie, laisser vide\n "
-          "3 pour extraire l'ensemble des livres par catégorie \n"
-          "4 pour télécharger les images des livres présents dans les fichiers CSV\n"
-          " tout autre saisie permettra de quitter")
-    choix = input()
-    if choix in ["1", "2", "3"]:
-        url = -1
-        while url:
-            print(
-                "Entrer l'url concernant les infos à extraire du site http://books.toscrape.com/ ou laisser vide pour quitter:")
-            url = input()
-            if url != "":
-                if choix == "1":
-                    livre = extract_info_livre(url)
-                    if livre:
-                        print(livre)
+    if args.url and args.impact == 'livre':
+        livre = extract_info_livre(args.url)
+        if livre:
+            livres.append(livre)
+            if args.csv:
+                export_csv(livres)
+            else:
+                print(livre)
+    elif args.url and args.impact == 'cat':
+        livres = extract_info_livres_par_categorie(args.url)
+        if livres:
+            if args.csv:
+                export_csv(livres)
+            else:
+                print(livres)
+    elif args.url and args.impact == 'tout':
+        extract_all(args.url)
 
-                        livres.append(livre)
-
-                    if len(livres) > 0:
-                        export_csv(livres)
-
-                elif choix == "2":
-                    livres = extract_info_livres_par_categorie(url)
-                    export_csv(livres)
-                elif choix == "3":
-                    extract_all(url)
-    if choix == "4":
-       telecharger_images()
-
+    if args.images:
+        telecharger_images()
 except ValueError as exc:
     print(exc)
+

@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 1.5.0
+version: 1.6.0
 
 ## Sommaire
 
@@ -49,25 +49,42 @@ Via un terminal :
  pip install -r requirements.txt 
 ```
 
-
 ### <a name="utilisation"></a>Utilisation
 
-#### Extraction des informations d'un livre
+#### Extraction des informations d'un livre, 
+Saisir la commande suivante
 ``` bash
- python script.py
+ python script.py --url=[url du livre] --impact=livre
 ```
-- *Extraire les informations d'un livre*
-A l'invite de commande, saisir 1 pour générer un fichier CSV avec les informations d'un livre
-puis saisir l'url du livre
-- *Extraire les informations des livres d'une catégorie*
-A l'invite de commande, saisir 2 pour générer un fichier CSV avec les informations des livres
-d'une catégorie puis saisir l'url de la catégorie.
-- *Extraire les informations des livres de l'ensemble des catégories*
-A l'invite de commande, saisir 3 pour générer un fichier CSV par catégorie avec les informations des livres
-de la catégorie puis saisir l'url du site
-- *Télécharger et enregistrer les images des livres*
-A l'invite de commande, saisir 4
+Ajouter l'option --csv pour générer un fichier csv dans le répertoire data
+``` bash
+ python script.py --url=[url du livre] --impact=livre --csv
+```
 
+#### Extraction des informations d'une catégorie de livre, 
+Saisir la commande suivante
+``` bash
+ python script.py --url=[url d'une catégorie] --impact=cat
+```
+Ajouter l'option --csv pour générer un fichier csv dans le répertoire data
+``` bash
+ python script.py --url=[url d'une catégorie] --impact=cat --csv
+```
+#### Extraction des informations de l'ensemble des livres, 
+Saisir la commande suivante
+``` bash
+ python script.py --url=[url du site] --impact=tout
+```
+Cela exporte l'ensemble des informations des livres dans des fichiers csv;
+un fichier CSV par catégorie de livre
+
+#### Télécharger et enregistrer les images des livres 
+Saisir la commande suivante
+``` bash
+ python script.py --images
+```
+Cela enregistre les fichiers images des livres dans le répertoire data/images. 
+Le nom du fichier est de la forme [upc du livre].jpg
 ### <a name="route"></a> Feuille de Route
 #### Etape 1 :Récupération, à la demande, des prix pratiqués
 Nous procéderons en plusieurs itérations :
@@ -114,3 +131,4 @@ choisie**
 - v1.3.0: Export csv des informations des livres d'une catégorie
 - v1.4.0: Extraction de l'ensemble des catégories du site et les livres liés.
 - v1.5.0: Télécharger et enregistrer le fichier image de chaque produit
+- v1.6.0: Fonctionnalités accessibles en lignes de commandes.
