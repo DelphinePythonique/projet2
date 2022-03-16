@@ -19,6 +19,8 @@ x category
 x review_rating
 x image_url
 """
+# ajout de ce commentaire pour juste tester le workflow github pylint
+
 domaine = 'http://books.toscrape.com'
 
 
