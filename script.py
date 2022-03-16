@@ -21,7 +21,7 @@ x image_url
 """
 # ajout de ce commentaire pour juste tester le workflow github pylint
 
-domaine = 'http://books.toscrape.com'
+DOMAINE = 'http://books.toscrape.com'
 
 
 def extract_info_livre(url):
@@ -51,7 +51,7 @@ def extract_info_livre(url):
 
             element['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
             element['image_url'] = soup.find('div', class_='thumbnail').find('img')['src']\
-                .replace('../..', domaine)
+                .replace('../..', DOMAINE)
         except AttributeError as exc:
             element = {}
             raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
@@ -91,7 +91,7 @@ def extraire_urls_livres_par_categorie(url):
 
             for link in links:
                 urls_livres.append(
-                    link.find("a")['href'].replace("../../..", domaine + "/catalogue"))
+                    link.find("a")['href'].replace("../../..", DOMAINE + "/catalogue"))
             print("[EN COURS]extract_urls_livre_par_catégorie page", num_page,
                   "nombre de livres total:",
                   str(len(urls_livres)))
@@ -105,16 +105,16 @@ def extraire_urls_livres_par_categorie(url):
                 "003:[extraction urls des livres d'une page categorie]cette erreur se produit "
                 "soit la page a évoluée, soit l'url de la page à extraire est erronée "
                 "et/ou ne concerne pas une page catégorie")
-            urls_livres = []
+
     return urls_livres
 
 
 def extract_info_livres_par_categorie(url_categorie):
     url_livres = extraire_urls_livres_par_categorie(url_categorie)
-    livres = []
+    elements = []
     for url in url_livres:
-        livres.append(extract_info_livre(url))
-    return livres
+        elements.append(extract_info_livre(url))
+    return elements
 
 
 def extract_urls_categorie(url_origine):
