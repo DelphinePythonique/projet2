@@ -46,7 +46,7 @@ def extract_info_livre(url_du_livre_a_extraire):
                 livre_a_extraire['description'] = ""
 
             livre_a_extraire['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
-            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src'] \
+            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src']\
                 .replace('../..', DOMAINE)
         except AttributeError as erreur_extraction:
             raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
@@ -170,7 +170,7 @@ def export_csv(elements):
     if len(elements) > 0:
 
         print("[DEBUT]export: de ", len(elements), "livre(s) dont le premier est :", elements[0])
-        if not (os.path.exists("data")):
+        if not os.path.exists("data"):
             os.mkdir("data")
         nom_du_fichier = "data/" + elements[0]['category'] + ".csv"
 
