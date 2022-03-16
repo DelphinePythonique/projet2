@@ -27,25 +27,25 @@ def extract_info_livre(url_du_livre_a_extraire):
             soup = BeautifulSoup(page.content, 'html.parser')
             livre_a_extraire['upc'] = soup.find('th', string='UPC').find_next_sibling('td').string
             livre_a_extraire['title'] = soup.find('h1').string
-            livre_a_extraire['price_including_tax'] = soup.find('th', string='Price (incl. tax)')\
+            livre_a_extraire['price_including_tax'] = soup.find('th', string='Price (incl. tax)') \
                 .find_next_sibling('td').string
-            livre_a_extraire['price_excluding_tax'] = soup.find('th', string='Price (excl. tax)')\
+            livre_a_extraire['price_excluding_tax'] = soup.find('th', string='Price (excl. tax)') \
                 .find_next_sibling('td').string
-            livre_a_extraire['number_available'] = soup.find('th', string='Availability')\
-                .find_next_sibling( 'td').string
-            livre_a_extraire['category'] = soup.find('ul', class_="breadcrumb")\
+            livre_a_extraire['number_available'] = soup.find('th', string='Availability') \
+                .find_next_sibling('td').string
+            livre_a_extraire['category'] = soup.find('ul', class_="breadcrumb") \
                 .findAll("li")[-2].find("a").string
             if soup.find(id='product_description'):
-                livre_a_extraire['description'] = soup.find(id='product_description')\
+                livre_a_extraire['description'] = soup.find(id='product_description') \
                     .find_next_sibling('p').string
             else:
                 livre_a_extraire['description'] = ""
 
             livre_a_extraire['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
-            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src']\
+            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src'] \
                 .replace('../..', DOMAINE)
         except AttributeError as exc:
-              raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
+            raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
                              "soit parce que l'url de la page à extraire est erronée\n "
                              "et/ou ne concerne pas une page livre.\n "
                              "Detail de l'erreur:" + str(exc))
@@ -64,6 +64,7 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
     :param url_categorie_des_livres_a_extraire: string
     :return: urls_livres list
     """
+
     def reforme_url(url, num_page):
         url_split = url.split('/')
         url_split = url_split[0:7]
@@ -156,6 +157,11 @@ def extract_all(url_origine):
 
 
 def export_csv(elements):
+    '''
+    Enregistre les elements dans un fichier csv
+    :param elements: list
+    :return: None
+    '''
     if len(elements) > 0:
 
         print("[DEBUT]export: de ", len(elements), "livre(s) dont le premier est :", elements[0])
@@ -177,10 +183,10 @@ def export_csv(elements):
         print("[WARNING] Aucun livre à exporter")
 
 
-def telecharger_image( path, nom_fichier):
+def telecharger_image(url_de_l_image, path, nom_fichier):
     '''
-    "Télécharge les images correspondant aux url_image reprises dans les fichiers csv générés par
-    l'application et les mémorise dans le répertoire data/images
+    Télécharge l'image correspondant à l'url_image
+    :param path: url_de_l_image
     :param path: str
     :param nom_fichier: str
     :return: none
@@ -189,16 +195,21 @@ def telecharger_image( path, nom_fichier):
     path_exist = os.path.exists(path)
     if not path_exist:
         os.makedirs(path)
-    page = requests.get(url, stream=True)
+    page = requests.get(url_de_l_image, stream=True)
     if page.ok:
         page.raw.decode_content = True
 
         with open(path + nom_fichier, 'wb') as fichier_image:
             shutil.copyfileobj(page.raw, fichier_image)
-    print("[FIN]Télécharger image  ", url, "chemin", path, "nom fichier ", nom_fichier)
+    print("[FIN]Télécharger image  ", url_de_l_image, "chemin", path, "nom fichier ", nom_fichier)
 
 
 def telecharger_images():
+    '''
+    Télécharge les images dont l'url_image est reprise dans les fichiers csv générés par
+    l'application et les mémorise dans le répertoire data/images
+    :return:
+    '''
     path = "data"
     files = os.listdir(path)
     for file in files:
