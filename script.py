@@ -1,3 +1,7 @@
+'''
+Script d'extractiopn des livres du site http://books.toscrape.com/, en fonction de plusieurs
+critères
+'''
 import argparse
 import os
 import shutil
@@ -44,11 +48,11 @@ def extract_info_livre(url_du_livre_a_extraire):
             livre_a_extraire['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
             livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src'] \
                 .replace('../..', DOMAINE)
-        except AttributeError as exc:
+        except AttributeError as erreur_extraction:
             raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
                              "soit parce que l'url de la page à extraire est erronée\n "
                              "et/ou ne concerne pas une page livre.\n "
-                             "Detail de l'erreur:" + str(exc))
+                             "Detail de l'erreur:" + str(erreur_extraction)) from erreur_extraction
     else:
         raise ValueError(
             "002:[extraction informations d'un livre]cette erreur se produit au moment de "
@@ -97,11 +101,11 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
             page = requests.get(url_reforme)
             print("[FIN]extract_urls_livre_par_catégorie:", url_reforme)
 
-        except AttributeError:
+        except AttributeError as erreur_extraction:
             raise ValueError(
                 "003:[extraction urls des livres d'une page categorie]cette erreur se produit "
                 "soit la page a évoluée, soit l'url de la page à extraire est erronée "
-                "et/ou ne concerne pas une page catégorie")
+                "et/ou ne concerne pas une page catégorie") from erreur_extraction
 
     return urls_livres
 
@@ -136,10 +140,11 @@ def extract_urls_categorie(url_origine):
             urls_categorie.append(url_origine + link['href'])
         print("[FIN]export urls des catégories à partir de l'url", url_origine, "de ",
               len(urls_categorie), " catégories")
-        return urls_categorie
+
     else:
         raise ValueError("005:[extraction urls des categories]cette erreur se produit "
                          "car la page demandée n'est pas accessible")
+    return urls_categorie
 
 
 def extract_all(url_origine):
@@ -186,7 +191,7 @@ def export_csv(elements):
 def telecharger_image(url_de_l_image, path, nom_fichier):
     '''
     Télécharge l'image correspondant à l'url_image
-    :param path: url_de_l_image
+    :param url_de_l_image: str
     :param path: str
     :param nom_fichier: str
     :return: none
