@@ -1,12 +1,14 @@
-'''
-Script d'extractiopn des livres du site http://books.toscrape.com/, en fonction de plusieurs
+"""
+Script d'extraction des livres du site http://books.toscrape.com/, en fonction de plusieurs
 critères
-'''
+"""
 import argparse
 import os
 import shutil
 
 import csv
+from itertools import groupby
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -18,7 +20,7 @@ DOMAINE = 'http://books.toscrape.com'
 def extract_info_livre(url_du_livre_a_extraire):
     """
     Extraction des informations d'un livre
-    :param url_du_livre_a_extraire: string
+    :param url_du_livre_a_extraire:string
     :return:  livre_a_extraire : dict
     """
     print("[DEBUT]extract_info_livre:", url_du_livre_a_extraire)
@@ -69,10 +71,10 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
     :return: urls_livres list
     """
 
-    def reforme_url(url, num_page):
+    def reforme_url(url, num_page_active):
         url_split = url.split('/')
         url_split = url_split[0:7]
-        url_split.append('page-' + str(num_page) + ".html")
+        url_split.append('page-' + str(num_page_active) + ".html")
         url = "/".join(url_split)
         return url
 
@@ -111,11 +113,11 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
 
 
 def extract_info_livres_par_categorie(url_categorie_livres_a_extraire):
-    '''
+    """
     Extrait les informations concernant des livres correspondant aux urls transmises
     :param url_categorie_livres_a_extraire: list
     :return: livres_a_extraire: list
-    '''
+    """
     url_livres = extraire_urls_livres_par_categorie(url_categorie_livres_a_extraire)
     livres_a_extraire = []
     for url in url_livres:
@@ -124,11 +126,11 @@ def extract_info_livres_par_categorie(url_categorie_livres_a_extraire):
 
 
 def extract_urls_categorie(url_origine):
-    '''
+    """
     Extrait les urls des catégories de l'url du site transmis
     :param url_origine: str
     :return: urls_categorie : list
-    '''
+    """
     page = requests.get(url_origine)
     if page.ok:
         print("[DEBUT]export urls des categories à partir de l'url", url_origine)
@@ -137,7 +139,7 @@ def extract_urls_categorie(url_origine):
         links.pop(0)  # suppression de la catégorie parent Books
         urls_categorie = []
         for link in links:
-            urls_categorie.append(url_origine + link['href'])
+            urls_categorie.append(url_origine + "/" + link['href'])
         print("[FIN]export urls des catégories à partir de l'url", url_origine, "de ",
               len(urls_categorie), " catégories")
 
@@ -148,54 +150,65 @@ def extract_urls_categorie(url_origine):
 
 
 def extract_all(url_origine):
-    '''
+    """
     Génère les fichiers csv de l'ensemble des livres; avec un fichier csv par catégorie de livre
     :param url_origine: str
-    :return: None
-    '''
+    :return: livres_extraits list
+    """
     print("[DEBUT]extraction intégral de:", url_origine)
     urls_categorie = extract_urls_categorie(url_origine)
+    livres_extraits = []
     for url in urls_categorie:
-        elements = extract_info_livres_par_categorie(url)
-        export_csv(elements)
+        livres_extraits.extend(extract_info_livres_par_categorie(url))
     print("[FIN]extraction intégral de:", url_origine)
+    return livres_extraits
 
 
-def export_csv(elements):
-    '''
+def export_csv(elements, regroupement_par):
+    """
     Enregistre les elements dans un fichier csv
+    :param regroupement_par: str
     :param elements: list
     :return: None
-    '''
-    if len(elements) > 0:
+    """
 
-        print("[DEBUT]export: de ", len(elements), "livre(s) dont le premier est :", elements[0])
+    def key_func(k):
+        return k[regroupement_par]
+
+    if len(elements) > 0:
+        elements = sorted(elements, key=key_func)
+
+        print("[DEBUT]export: de ", len(elements), "ligne(s) dont le premier est :", elements[0])
         if not os.path.exists("data"):
             os.mkdir("data")
-        nom_du_fichier = "data/" + elements[0]['category'] + ".csv"
 
-        en_tete = list(elements[0].keys())
+        for key, value in groupby(elements, key_func):
+            print(key)
+            # print(list(value))
+            nom_du_fichier = "data/" + key + ".csv"
 
-        with open(nom_du_fichier, "w", encoding="utf-8") as fichier_csv:
-            writer = csv.writer(fichier_csv, delimiter=",")
-            writer.writerow(en_tete)
-            for element in elements:
-                ligne = list(element.values())
-                writer.writerow(ligne)
-        print("[FIN]export: de ", len(elements), "livre(s) dont le dernier est :",
-              elements[len(elements) - 1])
+            elements_regroupes = list(value)
+            en_tete = list(elements_regroupes[0].keys())
+
+            with open(nom_du_fichier, "w", encoding="utf-8") as fichier_csv:
+                writer = csv.writer(fichier_csv, delimiter=",")
+                writer.writerow(en_tete)
+                for element_regroupe in elements_regroupes:
+                    ligne = list(element_regroupe.values())
+                    writer.writerow(ligne)
+        print("[FIN]export")
     else:
         print("[WARNING] Aucun livre à exporter")
 
 
 def telecharger_image(url_de_l_image, path, nom_fichier):
-    '''
+    """
     Télécharge l'image correspondant à l'url_image
     :param url_de_l_image: str
     :param path: str
     :param nom_fichier: str
     :return: none
-    '''
+    """
     print("[DEBUT]Télécharger image  ", "chemin", path, "nom fichier ", nom_fichier)
     path_exist = os.path.exists(path)
     if not path_exist:
@@ -210,11 +223,11 @@ def telecharger_image(url_de_l_image, path, nom_fichier):
 
 
 def telecharger_images():
-    '''
+    """
     Télécharge les images dont l'url_image est reprise dans les fichiers csv générés par
     l'application et les mémorise dans le répertoire data/images
     :return:
-    '''
+    """
     path = "data"
     files = os.listdir(path)
     for file in files:
@@ -261,18 +274,23 @@ try:
         if livre:
             livres.append(livre)
             if args.csv:
-                export_csv(livres)
+                export_csv(livres, 'category')
             else:
                 print(livre)
     elif args.url and args.impact == 'cat':
         livres = extract_info_livres_par_categorie(args.url)
         if livres:
             if args.csv:
-                export_csv(livres)
+                export_csv(livres, 'category')
             else:
                 print(livres)
     elif args.url and args.impact == 'tout':
-        extract_all(args.url)
+        livres = extract_all(args.url)
+        if livres:
+            if args.csv:
+                export_csv(livres, 'category')
+            else:
+                print(livres)
 
     if args.images:
         telecharger_images()

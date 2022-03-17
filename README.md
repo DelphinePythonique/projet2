@@ -4,7 +4,7 @@
 À terme, notre objectif sera de suivre les prix des livres chez 
 [Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
 
-version: 1.6.6
+version: 1.7.0
 
 ## Sommaire
 
@@ -75,8 +75,12 @@ Saisir la commande suivante
 ``` bash
  python script.py --url=[url du site] --impact=tout
 ```
-Cela exporte l'ensemble des informations des livres dans des fichiers csv;
-un fichier CSV par catégorie de livre
+Ajouter l'option --csv pour générer un fichier csv par catégorie dans le répertoire
+data
+
+``` bash
+ python script.py --url=[url du site] --impact=tout --csv
+```
 
 #### Télécharger et enregistrer les images des livres 
 Saisir la commande suivante
@@ -132,3 +136,5 @@ choisie**
 - v1.4.0: Extraction de l'ensemble des catégories du site et les livres liés.
 - v1.5.0: Télécharger et enregistrer le fichier image de chaque produit
 - v1.6.0: Fonctionnalités accessibles en lignes de commandes.
+- v1.7.0: Il est possible maintenant d'extraire l'ensemble des livres avec ou sans
+la génération d'un csv.
