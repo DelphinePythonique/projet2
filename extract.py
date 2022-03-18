@@ -1,25 +1,20 @@
 """
-Fonctions utiles pour l'extraction des informations du site http://books.toscrape.com/
+ Fonctionnalités en lien avec l'extraction d'information du site http://books.toscrape.com/
 """
+
 import os
 import shutil
-import logging
-import csv
-from itertools import groupby
 
+from log import logger
 import requests
 from bs4 import BeautifulSoup
 
-DOMAINE = 'http://books.toscrape.com'
 
-logging.basicConfig(filename='std.log', filemode='w',
-                    format='%(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+def extract_domaine(url):
+    return url.split("/")[0]
 
 
 def extract_info_livre(url_du_livre_a_extraire):
-
     """
     Extraction des informations d'un livre
 
@@ -38,22 +33,20 @@ def extract_info_livre(url_du_livre_a_extraire):
     'price_including_tax': '£51.77',
     'price_excluding_tax': '£51.77',
     'number_available': 'In stock (22 available)',
-    'category': 'Poetry',
-    'description': "It's hard to imagine a world without A Light in the Attic.
-    This now-classic collection of poetry and drawings from Shel Silverstein celebrates its 20th
-    anniversary with this special edition. Silverstein's humorous and creative verse can amuse the
-    dowdiest of readers. Lemon-faced adults and fidgety kids sit still and read these rhythmic
-    words and laugh and smile and love th It's hard to imagine a world without A Light in the Attic.
-    This now-classic collection of poetry and drawings from Shel Silverstein celebrates its 20th
-    anniversary with this special edition. Silverstein's humorous and creative verse can amuse the
-    dowdiest of readers. Lemon-faced adults and fidgety kids sit still and read these rhythmic words
-    and laugh and smile and love that Silverstein. Need proof of his genius? RockabyeRockabye baby,
-    in the treetopDon't you know a treetopIs no safe place to rock?And who put you up there,And
-    your cradle, too?Baby, I think someone down here'sGot it in for you. Shel, you never sounded so
-    good. ...more",
+    'category': 'Poetry', 'description': "It's hard to imagine a world without A Light
+    in the Attic. This now-classic collection of poetry and drawings from Shel Silverstein
+    celebrates its 20th anniversary with this special edition. Silverstein's humorous and creative
+    verse can amuse the dowdiest of readers. Lemon-faced adults and fidgety kids sit still and read
+    these rhythmic words and laugh and smile and love th It's hard to imagine a world without A
+    Light in the Attic. This now-classic collection of poetry and drawings from Shel Silverstein
+    celebrates its 20th anniversary with this special edition. Silverstein's humorous and creative
+    verse can amuse the dowdiest of readers. Lemon-faced adults and fidgety kids sit still and read
+    these rhythmic words and laugh and smile and love that Silverstein. Need proof of his genius?
+    RockabyeRockabye baby, in the treetopDon't you know a treetopIs no safe place to rock?And
+    who put you up there,And your cradle, too?Baby, I think someone down here'sGot it in for you.
+    Shel, you never sounded so good. ...more",
     'review_rating': 'Three',
-    'image_url': 'http://books.toscrape.com/media/cache/fe/72/fe72f0532301ec28892ae79a629a293c.jpg'}
-
+    'image_url': 'https:/media/cache/fe/72/fe72f0532301ec28892ae79a629a293c.jpg'}
     """
 
     logger.info("[DEBUT]extract_info_livre:%s", url_du_livre_a_extraire)
@@ -81,8 +74,9 @@ def extract_info_livre(url_du_livre_a_extraire):
                 livre_a_extraire['description'] = ""
 
             livre_a_extraire['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
-            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src']\
-                .replace('../..', DOMAINE)
+            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail') \
+                .find('img')['src'] \
+                .replace('../..', extract_domaine(url_du_livre_a_extraire))
         except AttributeError as erreur_extraction:
             raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
                              "soit parce que l'url de la page à extraire est erronée\n "
@@ -95,6 +89,35 @@ def extract_info_livre(url_du_livre_a_extraire):
 
     logger.info("[FIN]extract_info_livre:%s, infos:%s", url_du_livre_a_extraire, livre_a_extraire)
     return livre_a_extraire
+
+
+def extract_urls_categorie(url_origine):
+    """
+    Extrait les urls des catégories de l'url du site transmis
+    :param url_origine
+    :type url_origine: str
+    :return: urls_categorie : list
+
+    >>> len(extract_urls_categorie("http://books.toscrape.com/")) > 0
+    True
+
+    """
+    page = requests.get(url_origine)
+    if page.ok:
+        logger.info("[DEBUT]export urls des categories à partir de l'url %s", url_origine)
+        soup = BeautifulSoup(page.content, "html.parser")
+        links = soup.find('div', class_="side_categories").find_all('a')
+        links.pop(0)  # suppression de la catégorie parent Books
+        urls_categorie = []
+        for link in links:
+            urls_categorie.append(url_origine + "/" + link['href'])
+        logger.info("[FIN]export urls des catégories à partir de l'url %s "
+                    "de %s catégories", url_origine, len(urls_categorie))
+
+    else:
+        raise ValueError("005:[extraction urls des categories]cette erreur se produit "
+                         "car la page demandée n'est pas accessible")
+    return urls_categorie
 
 
 def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
@@ -132,7 +155,10 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
 
             for link in links:
                 urls_livres.append(
-                    link.find("a")['href'].replace("../../..", DOMAINE + "/catalogue"))
+                    link.find("a")['href'].replace("../../..",
+                                                   extract_domaine(
+                                                       url_categorie_des_livres_a_extraire)
+                                                   + "/catalogue"))
             logger.info("[EN COURS]extract_urls_livre_par_catégorie page %s "
                         "nombre de livres total:%s", num_page, str(len(urls_livres)))
             num_page += 1
@@ -162,35 +188,6 @@ def extract_info_livres_par_categorie(url_categorie_livres_a_extraire):
     return livres_a_extraire
 
 
-def extract_urls_categorie(url_origine):
-    """
-    Extrait les urls des catégories de l'url du site transmis
-    :param url_origine
-    :type url_origine: str
-    :return: urls_categorie : list
-
-    >>> len(extract_urls_categorie("http://books.toscrape.com/")) > 0
-    True
-
-    """
-    page = requests.get(url_origine)
-    if page.ok:
-        logger.info("[DEBUT]export urls des categories à partir de l'url %s", url_origine)
-        soup = BeautifulSoup(page.content, "html.parser")
-        links = soup.find('div', class_="side_categories").find_all('a')
-        links.pop(0)  # suppression de la catégorie parent Books
-        urls_categorie = []
-        for link in links:
-            urls_categorie.append(url_origine + "/" + link['href'])
-        logger.info("[FIN]export urls des catégories à partir de l'url %s "
-                    "de %s catégories", url_origine, len(urls_categorie))
-
-    else:
-        raise ValueError("005:[extraction urls des categories]cette erreur se produit "
-                         "car la page demandée n'est pas accessible")
-    return urls_categorie
-
-
 def extract_all(url_origine):
     """
     Génère les fichiers csv de l'ensemble des livres; avec un fichier csv par catégorie de livre
@@ -206,44 +203,7 @@ def extract_all(url_origine):
     return livres_extraits
 
 
-def export_csv(elements, regroupement_par):
-    """
-    Enregistre les elements dans un fichier csv
-    :param regroupement_par: str
-    :param elements: list
-    :return: None
-    """
-
-    def key_func(k):
-        return k[regroupement_par]
-
-    if len(elements) > 0:
-        elements = sorted(elements, key=key_func)
-
-        logger.info("[DEBUT]export: de %s ligne(s) "
-                    "dont le premier est : %s", len(elements), elements[0])
-        if not os.path.exists("data"):
-            os.mkdir("data")
-
-        for key, value in groupby(elements, key_func):
-
-            nom_du_fichier = "data/" + key + ".csv"
-
-            elements_regroupes = list(value)
-            en_tete = list(elements_regroupes[0].keys())
-
-            with open(nom_du_fichier, "w", encoding="utf-8") as fichier_csv:
-                writer = csv.writer(fichier_csv, delimiter=",")
-                writer.writerow(en_tete)
-                for element_regroupe in elements_regroupes:
-                    ligne = list(element_regroupe.values())
-                    writer.writerow(ligne)
-        logger.info("[FIN]export")
-    else:
-        logger.info("[WARNING] Aucun livre à exporter")
-
-
-def telecharger_image(url_de_l_image, path, nom_fichier):
+def extract_image(url_de_l_image, path, nom_fichier):
     """
     Télécharge l'image correspondant à l'url_image
     :param url_de_l_image: str
@@ -263,21 +223,3 @@ def telecharger_image(url_de_l_image, path, nom_fichier):
             shutil.copyfileobj(page.raw, fichier_image)
     logger.info("[FIN]Télécharger image %s chemin %s nom fichier %s", url_de_l_image,
                 path, nom_fichier)
-
-
-def telecharger_images():
-    """
-    Télécharge les images dont l'url_image est reprise dans les fichiers csv générés par
-    l'application et les mémorise dans le répertoire data/images
-    :return:
-    """
-    path = "data"
-    files = os.listdir(path)
-    for file in files:
-        if file.endswith('.csv'):
-            with open(path + "/" + file, encoding="utf-8") as fichier_csv:
-                dict_reader = csv.DictReader(fichier_csv, delimiter=",")
-                for row in dict_reader:
-                    url = row['image_url']
-                    nom_fichier_a_telecharger = row['upc'] + ".jpg"
-                    telecharger_image(url, "data/images/", nom_fichier_a_telecharger)

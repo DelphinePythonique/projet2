@@ -5,14 +5,11 @@ critères
 
 import argparse
 
-from functions import extract_info_livre
-from functions import extract_info_livres_par_categorie
-from functions import extract_all
-from functions import export_csv
-from functions import telecharger_images
-
-
-
+from extract import extract_info_livre
+from extract import extract_info_livres_par_categorie
+from extract import extract_all
+from export_csv import export_csv
+from images import telecharger_images
 
 livres = []
 
