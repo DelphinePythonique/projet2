@@ -23,10 +23,10 @@ def extract_info_livre(url_du_livre_a_extraire):
     """
     Extraction des informations d'un livre
 
-        :param url_du_livre_a_extraire : Url de la page concernant un livre à extraire
-        :type url_du_livre_a_extraire: str
-        :return: livre_a_extraire: Dictionnaire contenant l'ensemble des informations du livre
-        :rtype:  dict
+    :param url_du_livre_a_extraire : Url de la page concernant un livre à extraire
+    :type url_du_livre_a_extraire: str
+    :return: livre_a_extraire: Dictionnaire contenant l'ensemble des informations du livre
+    :rtype:  dict
 
     >>> extract_info_livre(
     ... "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
@@ -101,11 +101,11 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
     """
      Extraction des urls des livres d'une catégorie
 
-    Parameters
-    url_categorie_des_livres_a_extraire (str)
-
-    Returns
+    :param url_categorie_des_livres_a_extraire
+    :type url_categorie_des_livres_a_extraire:str
+    :returns
     urls_livres list
+
     """
 
     def reforme_url(url, num_page_active):
@@ -165,8 +165,13 @@ def extract_info_livres_par_categorie(url_categorie_livres_a_extraire):
 def extract_urls_categorie(url_origine):
     """
     Extrait les urls des catégories de l'url du site transmis
-    :param url_origine: str
+    :param url_origine
+    :type url_origine: str
     :return: urls_categorie : list
+
+    >>> len(extract_urls_categorie("http://books.toscrape.com/")) > 0
+    True
+
     """
     page = requests.get(url_origine)
     if page.ok:
