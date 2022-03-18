@@ -1,3 +1,6 @@
+"""
+Fonctions utiles pour l'extraction des informations du site http://books.toscrape.com/
+"""
 import os
 import shutil
 import logging
@@ -25,8 +28,11 @@ def extract_info_livre(url_du_livre_a_extraire):
         :return: livre_a_extraire: Dictionnaire contenant l'ensemble des informations du livre
         :rtype:  dict
 
-    >>> extract_info_livre("https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")  # doctest: +NORMALIZE_WHITESPACE
-    {'product_page_url': 'https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html',
+    >>> extract_info_livre(
+    ... "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
+    ... )  # doctest: +NORMALIZE_WHITESPACE
+    {'product_page_url':
+    'https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html',
     'upc': 'a897fe39b1053632',
     'title': 'A Light in the Attic',
     'price_including_tax': '£51.77',
@@ -75,7 +81,7 @@ def extract_info_livre(url_du_livre_a_extraire):
                 livre_a_extraire['description'] = ""
 
             livre_a_extraire['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
-            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src'] \
+            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail').find('img')['src']\
                 .replace('../..', DOMAINE)
         except AttributeError as erreur_extraction:
             raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
