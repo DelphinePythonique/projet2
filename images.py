@@ -4,8 +4,6 @@ Fonctionnalités en lien avec l'enregistrement d'image
 
 import csv
 import os
-
-from log import logger
 from extract import extract_image
 
 
