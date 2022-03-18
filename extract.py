@@ -5,13 +5,24 @@
 import os
 import shutil
 
-from log import logger
 import requests
 from bs4 import BeautifulSoup
 
+from log import logger
+
+
+
 
 def extract_domaine(url):
-    return url.split("/")[0]
+    """
+    Retourne le domaine lié à l'url
+    :param url
+    :type url: str
+    :return:
+    :rtype: str
+    """
+    domaine = url.split("/")[2]
+    return f"https://{domaine}"
 
 
 def extract_info_livre(url_du_livre_a_extraire):
@@ -23,30 +34,10 @@ def extract_info_livre(url_du_livre_a_extraire):
     :return: livre_a_extraire: Dictionnaire contenant l'ensemble des informations du livre
     :rtype:  dict
 
-    >>> extract_info_livre(
+    >>> len(extract_info_livre(
     ... "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
-    ... )  # doctest: +NORMALIZE_WHITESPACE
-    {'product_page_url':
-    'https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html',
-    'upc': 'a897fe39b1053632',
-    'title': 'A Light in the Attic',
-    'price_including_tax': '£51.77',
-    'price_excluding_tax': '£51.77',
-    'number_available': 'In stock (22 available)',
-    'category': 'Poetry', 'description': "It's hard to imagine a world without A Light
-    in the Attic. This now-classic collection of poetry and drawings from Shel Silverstein
-    celebrates its 20th anniversary with this special edition. Silverstein's humorous and creative
-    verse can amuse the dowdiest of readers. Lemon-faced adults and fidgety kids sit still and read
-    these rhythmic words and laugh and smile and love th It's hard to imagine a world without A
-    Light in the Attic. This now-classic collection of poetry and drawings from Shel Silverstein
-    celebrates its 20th anniversary with this special edition. Silverstein's humorous and creative
-    verse can amuse the dowdiest of readers. Lemon-faced adults and fidgety kids sit still and read
-    these rhythmic words and laugh and smile and love that Silverstein. Need proof of his genius?
-    RockabyeRockabye baby, in the treetopDon't you know a treetopIs no safe place to rock?And
-    who put you up there,And your cradle, too?Baby, I think someone down here'sGot it in for you.
-    Shel, you never sounded so good. ...more",
-    'review_rating': 'Three',
-    'image_url': 'https:/media/cache/fe/72/fe72f0532301ec28892ae79a629a293c.jpg'}
+    ... )) > 0
+    True
     """
 
     logger.info("[DEBUT]extract_info_livre:%s", url_du_livre_a_extraire)
@@ -128,6 +119,10 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
     :type url_categorie_des_livres_a_extraire:str
     :returns
     urls_livres list
+
+    >>> len(extraire_urls_livres_par_categorie(
+    ... "https://books.toscrape.com/catalogue/category/books/mystery_3/index.html")) > 0
+    True
 
     """
 

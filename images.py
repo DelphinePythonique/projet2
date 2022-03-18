@@ -1,3 +1,7 @@
+"""
+Fonctionnalités en lien avec l'enregistrement d'image
+"""
+
 import csv
 import os
 
