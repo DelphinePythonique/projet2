@@ -13,9 +13,9 @@ version: 1.7.1
 
 [Use](#use)
 
-[Feuille de route](#route)
+[Todo](TODO.md)
 
-[Changelog](#changelog)
+[Changelog](CHANGELOG.md)
 
 ------------
 ### <a name="install"></a>Install
@@ -39,8 +39,7 @@ Position yourself in the local directory in which you want to position the sourc
  git clone git@github.com:DelphinePythonique/projet2.git
 ```
 
-- 
-Position yourself in the project directory, create and activate a virtual environment
+- Position yourself in the project directory, create and activate a virtual environment
 
 ``` bash
  cd projet
