@@ -5,7 +5,7 @@ criteria
 
 import argparse
 
-from extract import extract_datas_book
+from extract import extract_book_datas
 from extract import extract_book_datas_by_category
 from extract import extract_all
 from export_csv import export_csv
@@ -45,7 +45,7 @@ def main():
 
     try:
         if args.url and args.impact == 'book':
-            livre = extract_datas_book(args.url)
+            livre = extract_book_datas(args.url)
             if livre:
                 livres.append(livre)
                 if args.csv:

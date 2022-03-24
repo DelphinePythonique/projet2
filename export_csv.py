@@ -23,8 +23,8 @@ def export_csv(elements, grouped_by):
     if len(elements) > 0:
         elements = sorted(elements, key=find_grouping_field_value)
 
-        logger.info("[DEBUT]export: de %s line(s) "
-                    "dont le premier est : %s", len(elements), elements[0])
+        logger.info("[BEGIN]export: of %s line(s) "
+                    "the first is : %s", len(elements), elements[0])
         if not os.path.exists("data"):
             os.mkdir("data")
 

@@ -24,7 +24,7 @@ def extract_domain(url):
     return f"https://{domain}"
 
 
-def extract_datas_book(book_to_extract_url):
+def extract_book_datas(book_to_extract_url):
     """
     Extract book's datas
 
@@ -33,11 +33,11 @@ def extract_datas_book(book_to_extract_url):
     :return: book_to_extract: book's datas dict
     :rtype:  dict
 
-    >>> len(extract_datas_book("https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")) > 0
+    >>> len(extract_book_datas("https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")) > 0
     True
     """
 
-    logger.info("[DEBUT]extract_info_livre:%s", book_to_extract_url)
+    logger.info("[BEGIN]extract_info_livre:%s", book_to_extract_url)
     page = requests.get(book_to_extract_url)
     book_to_extract = {}
 
@@ -66,16 +66,15 @@ def extract_datas_book(book_to_extract_url):
                 .find('img')['src'] \
                 .replace('../..', extract_domain(book_to_extract_url))
         except AttributeError as erreur_extraction:
-            raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
-                             "soit parce que l'url de la page à extraire est erronée\n "
-                             "et/ou ne concerne pas une page livre.\n "
-                             "Detail de l'erreur:" + str(erreur_extraction)) from erreur_extraction
+            raise ValueError("001:[Extract book's datas] This error is \n "
+                             "in case page's url is not exist \n "
+                             "and/or is not a book's page.\n "
+                             "error:" + str(erreur_extraction)) from erreur_extraction
     else:
         raise ValueError(
-            "002:[extraction informations d'un livre]cette erreur se produit au moment de "
-            "l'extraction d'une page de type livre; la page demandée n'est pas accessible")
+            "002:[Extract book's datas]this erreur occurs if the requested page is not accessible")
 
-    logger.info("[FIN]extract_info_livre:%s, infos:%s", book_to_extract_url, book_to_extract)
+    logger.info("[END]extract_info_livre:%s, infos:%s", book_to_extract_url, book_to_extract)
     return book_to_extract
 
 
@@ -92,19 +91,19 @@ def extract_urls_category(url_origine):
     """
     page = requests.get(url_origine)
     if page.ok:
-        logger.info("[DEBUT]export urls des categories à partir de l'url %s", url_origine)
+        logger.info("[BEGIN]export urls of categories from url %s", url_origine)
         soup = BeautifulSoup(page.content, "html.parser")
         links = soup.find('div', class_="side_categories").find_all('a')
-        links.pop(0)  # suppression de la catégorie parent Books
+        links.pop(0)  # delete of parent category Books
         urls_categorie = []
         for link in links:
             urls_categorie.append(url_origine + "/" + link['href'])
-        logger.info("[FIN]export urls des catégories à partir de l'url %s "
-                    "de %s catégories", url_origine, len(urls_categorie))
+        logger.info("[END]export urls of catégories from url %s "
+                    "of %s catégories", url_origine, len(urls_categorie))
 
     else:
-        raise ValueError("005:[extraction urls des categories]cette erreur se produit "
-                         "car la page demandée n'est pas accessible")
+        raise ValueError("005:[extract urls of categories]this error occurs "
+                         "when requested page is not accessible")
     return urls_categorie
 
 
@@ -134,12 +133,11 @@ def extract_book_url_by_category(books_to_extract_category_url):
 
     books_url = []
     page = requests.get(books_to_extract_category_url)
-    logger.info("[DEBUT]extract_urls_livre_par_catégorie:%s", books_to_extract_category_url)
+    logger.info("[BEGIN]extract_book_url_by_category:%s", books_to_extract_category_url)
     if not page.ok:
         raise ValueError(
-            "004:[extraction urls des livres d'une page categorie]cette erreur se produit "
-            "au moment de l'extraction d'une page de type livre; la page demandée "
-            "n'est pas accessible")
+            "004:[extract urls of books from category url]this error occurs "
+                         "when requested page is not accessible")
     while page.ok:
         try:
             soup = BeautifulSoup(page.content, 'html.parser')
@@ -160,8 +158,8 @@ def extract_book_url_by_category(books_to_extract_category_url):
 
         except AttributeError as erreur_extraction:
             raise ValueError(
-                "003:[extraction urls des livres d'une page categorie]cette erreur se produit "
-                "soit la page a évoluée, soit l'url de la page à extraire est erronée "
+                "003:[extraction urls des livres d'une page category]this error occurs "
+                "if page has evolved, or if page's url is wrong "
                 "et/ou ne concerne pas une page catégorie") from erreur_extraction
 
     return books_url
@@ -176,7 +174,7 @@ def extract_book_datas_by_category(books_to_extract_category_url):
     url_livres = extract_book_url_by_category(books_to_extract_category_url)
     livres_a_extraire = []
     for url in url_livres:
-        livres_a_extraire.append(extract_datas_book(url))
+        livres_a_extraire.append(extract_book_datas(url))
     return livres_a_extraire
 
 
@@ -186,12 +184,12 @@ def extract_all(url_origin = DOMAIN):
     :param url_origin: str
     :return: extract_books list
     """
-    logger.info("[DEBUT]extraction intégral de:%s", url_origin)
+    logger.info("[BEGIN]extraction of all books from :%s", url_origin)
     urls_category = extract_urls_category(url_origin)
     extract_books = []
     for url in urls_category:
-        extract_books.extend(extract_book_url_by_category(url))
-    logger.info("[FIN]extraction intégral de:%s", url_origin)
+        extract_books.extend(extract_book_datas_by_category(url))
+    logger.info("[FIN]extraction of all books from :%s", url_origin)
     return extract_books
 
 
@@ -203,7 +201,7 @@ def extract_image(image_url, path, file_name):
     :param file_name: str
     :return: none
     """
-    logger.info("[DEBUT]Télécharger image, chemin %s nom fichier %s", path, file_name)
+    logger.info("[DEBUT]Download image, path %s file name %s", path, file_name)
     path_exist = os.path.exists(path)
     if not path_exist:
         os.makedirs(path)
@@ -213,5 +211,5 @@ def extract_image(image_url, path, file_name):
 
         with open(path + file_name, 'wb') as fichier_image:
             shutil.copyfileobj(page.raw, fichier_image)
-    logger.info("[FIN]Télécharger image %s chemin %s nom fichier %s", image_url,
+    logger.info("[END]Download image %s, path %s file name %s", image_url,
                 path, file_name)
