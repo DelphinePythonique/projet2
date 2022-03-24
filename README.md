@@ -1,140 +1,92 @@
-# Projet 2 : Utiliser les bases de Python pour l'analyse de marché
+# project #2: Using Python Basics for Market Analysis
 
-## Objectif: 
-À terme, notre objectif sera de suivre les prix des livres chez 
-[Book To Scrape](http://books.toscrape.com/), un revendeur de livres en ligne. 
+## Goals: 
+Ultimately, our goal will be to track book prices at
+[Book To Scrape](http://books.toscrape.com/), an online bookstore
+. 
 
 version: 1.7.1
 
-## Sommaire
+## Summary
 
-[Installation](#installation)
+[Install](#install)
 
-[Utilisation](#utilisation)
+[Use](#use)
 
 [Feuille de route](#route)
 
 [Changelog](#changelog)
 
 ------------
-### <a name="installation"></a>Installation
+### <a name="install"></a>Install
 
-Cette installation concerne un environnement de développement.
+This setup is for a development environment.
 
-Pré-requis: 
+Prerequisite:
 
 - \>= python3,9
 
-Via un terminal : 
+Through a terminal : 
 
-- Se positionner dans le répertoire local dans lequel vous voulez positionner les sources de l'application
+Position yourself in the local directory in which you want to position the sources of the application
 ``` bash
- cd [chemin_vers_mon_repertoire_de_sources]
+ cd [path_to_source_directory]
 ```
--  Cloner le dépot via la commande clone en mode ssh
+-  Clone the repository via the clone command in ssh mode
 [ssh](https://docs.github.com/en/authentication/connecting-to-github-with-ssh), via la commande suivante
 
 ``` bash
  git clone git@github.com:DelphinePythonique/projet2.git
 ```
 
-- Se positionner dans le répertoire du projet, créer et activer un environnement virtuel
+- 
+Position yourself in the project directory, create and activate a virtual environment
+
 ``` bash
  cd projet
  python -m venv env
  source env/bin/activate
 ```
-- Installer les packages python utiles au script
+- Install the python packages useful for the script
 ``` bash
  pip install -r requirements.txt 
 ```
 
-### <a name="utilisation"></a>Utilisation
+### <a name="use"></a>Uses
 
-#### Extraction des informations d'un livre, 
-Saisir la commande suivante
+#### Extract book's datas 
+Enter the following command
 ``` bash
- python script.py --url=[url du livre] --impact=livre
+ python main.py --url=[book's url] --impact=book
 ```
-Ajouter l'option --csv pour générer un fichier csv dans le répertoire data
+Add option --csv to generate a csv file in the data directory
 ``` bash
- python script.py --url=[url du livre] --impact=livre --csv
-```
-
-#### Extraction des informations d'une catégorie de livre, 
-Saisir la commande suivante
-``` bash
- python script.py --url=[url d'une catégorie] --impact=cat
-```
-Ajouter l'option --csv pour générer un fichier csv dans le répertoire data
-``` bash
- python script.py --url=[url d'une catégorie] --impact=cat --csv
-```
-#### Extraction des informations de l'ensemble des livres, 
-Saisir la commande suivante
-``` bash
- python script.py --url=[url du site] --impact=tout
-```
-Ajouter l'option --csv pour générer un fichier csv par catégorie dans le répertoire
-data
-
-``` bash
- python script.py --url=[url du site] --impact=tout --csv
+ python main.py --url=[book's url] --impact=book --csv
 ```
 
-#### Télécharger et enregistrer les images des livres 
-Saisir la commande suivante
+#### Extract a category's books's data  
+Enter the following command
 ``` bash
- python script.py --images
+ python main.py --url=[category's url] --impact=cat
 ```
-Cela enregistre les fichiers images des livres dans le répertoire data/images. 
-Le nom du fichier est de la forme [upc du livre].jpg
-### <a name="route"></a> Feuille de Route
-#### Etape 1 :Récupération, à la demande, des prix pratiqués
-Nous procéderons en plusieurs itérations :
+Add option --csv to generate a csv file in the data directory
+``` bash
+ python main.py --url=[category's url] --impact=cat --csv
+```
+#### Extraction all books's datas 
+Enter the following command
+``` bash
+ python main.py --all
+```
+Add option --csv to generate a csv file in the data directory per category
 
-*Extraction d'un livre*
-- [X] **Extraire les informations concernant un seul livre**: 
-     - product_page_url
-     - universal_ product_code (upc)
-     - title 
-     - price_including_tax 
-     - price_excluding_tax 
-     - number_available
-     - product_description 
-     - category
-     - review_rating
-     - image_url
-- [X] **Ecrire ces informations dans un fichier CSV**; les champs ci-dessus
-correspondront aux en-têtes de colonnes.
+``` bash
+ python main.py --all --csv
+```
 
-*Extraction des livres d'une catégorie*
-
-- [X] **extraire les urls des livres attachés à une catégorie, présent 
-sur une page catégorie**
-- [X] **extraire les urls des livres attachés à une catégorie, présent 
-sur l'ensemble des pages concernées par la catégorie**
-- [X] **extraire les données produit de tous les livres de la catégorie 
-choisie** 
-- [X] **écrire ces informations dans un seul fichier CSV**
-
-*Extraction de l'ensemble des catégories puis des livres associés*
-- [X] Extraire les informations
-- [X] Pour chaque catégorie, écrire les informations dans un fichier CSV
-
-*Télécharger et enregistrer le fichier image de chaque produit*
-- [x] Télécharger et enregitrer une image
-- [x] Télécharger et enregistrer l'ensemble des images
-
-### <a name="Changelog"></a>Changelog
-
-- v1.0.0: extraction des informations du livre de l'url 
-"http://books.toscrape.com/catalogue/soumission_998/index.html"
-- v1.1.0: Ajout d'un prompt pour selectionner une page d'une livre à extraire
-- v1.2.0: Export csv des informations du livre
-- v1.3.0: Export csv des informations des livres d'une catégorie
-- v1.4.0: Extraction de l'ensemble des catégories du site et les livres liés.
-- v1.5.0: Télécharger et enregistrer le fichier image de chaque produit
-- v1.6.0: Fonctionnalités accessibles en lignes de commandes.
-- v1.7.0: Il est possible maintenant d'extraire l'ensemble des livres avec ou sans
-la génération d'un csv.
+#### Download et save book's image in data/images directory
+Enter the following command
+``` bash
+ python main.py --images
+```
+File's format is  [book's upc].jpg

@@ -1,34 +1,36 @@
 """
-Script d'extraction des livres du site http://books.toscrape.com/, en fonction de plusieurs
-critères
+Extract books's datas from website  http://books.toscrape.com/, depending on several
+criteria
 """
 
 import argparse
 
-from extract import extract_info_livre
-from extract import extract_info_livres_par_categorie
+from extract import extract_datas_book
+from extract import extract_book_datas_by_category
 from extract import extract_all
 from export_csv import export_csv
-from images import telecharger_images
+from images import images_download
 
 
 def main():
+
     livres = []
 
     parser = argparse.ArgumentParser(
-        description="exporter les informations concernant les livres du site "
+        description="extract book's datas "
                     "http://books.toscrape.com/")
     parser.add_argument("--csv", action="store_true",
-                        help="Export les informations dans un fichier CSV présent dans data")
+                        help="save datas into csv file")
+    parser.add_argument("--all", action="store_true",
+                        help="extract all books ")
     parser.add_argument("--url",
-                        help="Indiquer l'url de la page à partir de laquelle exporter les informations")
+                        help="url of the page from which to extract the datas")
     parser.add_argument("--images", action="store_true",
-                        help="Télécharge et enregistre les images dans data/images")
-    parser.add_argument("--impact", choices=['livre', 'cat', 'tout'],
-                        help="Extrait les informations d'un livre avec type=livre "
-                             "ou d'une categorie type=cat, "
-                             "ou de l'ensemble des livres avec type=tout; tout génère automatiquement "
-                             "les CSV")
+                        help="Save images into data/images")
+    parser.add_argument("--impact", choices=['book', 'cat', 'all'],
+                        help="Extract book's data with type=book "
+                             "or from category with type=cat "
+                        )
 
     args = parser.parse_args()
 
@@ -42,8 +44,8 @@ def main():
         parser.error("--impact requiert --url.")
 
     try:
-        if args.url and args.impact == 'livre':
-            livre = extract_info_livre(args.url)
+        if args.url and args.impact == 'book':
+            livre = extract_datas_book(args.url)
             if livre:
                 livres.append(livre)
                 if args.csv:
@@ -51,14 +53,14 @@ def main():
                 else:
                     print(livre)
         elif args.url and args.impact == 'cat':
-            livres = extract_info_livres_par_categorie(args.url)
+            livres = extract_book_datas_by_category(args.url)
             if livres:
                 if args.csv:
                     export_csv(livres, 'category')
                 else:
                     print(livres)
-        elif args.url and args.impact == 'tout':
-            livres = extract_all(args.url)
+        elif args.all:
+            livres = extract_all()
             if livres:
                 if args.csv:
                     export_csv(livres, 'category')
@@ -66,7 +68,7 @@ def main():
                     print(livres)
 
         if args.images:
-            telecharger_images()
+            images_download()
     except ValueError as exc:
         print(exc)
 

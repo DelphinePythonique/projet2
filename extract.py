@@ -1,5 +1,5 @@
 """
- Fonctionnalités en lien avec l'extraction d'information du site http://books.toscrape.com/
+Functionality related to the extraction of information from the site http://books.toscrape.com/
 """
 
 import os
@@ -10,64 +10,61 @@ from bs4 import BeautifulSoup
 
 from log import logger
 
+DOMAIN = "https://books.toscrape.com/"
 
-
-
-def extract_domaine(url):
+def extract_domain(url):
     """
-    Retourne le domaine lié à l'url
+    Return domain linked to l'url
     :param url
     :type url: str
     :return:
     :rtype: str
     """
-    domaine = url.split("/")[2]
-    return f"https://{domaine}"
+    domain = url.split("/")[2]
+    return f"https://{domain}"
 
 
-def extract_info_livre(url_du_livre_a_extraire):
+def extract_datas_book(book_to_extract_url):
     """
-    Extraction des informations d'un livre
+    Extract book's datas
 
-    :param url_du_livre_a_extraire : Url de la page concernant un livre à extraire
-    :type url_du_livre_a_extraire: str
-    :return: livre_a_extraire: Dictionnaire contenant l'ensemble des informations du livre
+    :param book_to_extract_url : book's url concerning a book to extract
+    :type book_to_extract_url: str
+    :return: book_to_extract: book's datas dict
     :rtype:  dict
 
-    >>> len(extract_info_livre(
-    ... "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
-    ... )) > 0
+    >>> len(extract_datas_book("https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")) > 0
     True
     """
 
-    logger.info("[DEBUT]extract_info_livre:%s", url_du_livre_a_extraire)
-    page = requests.get(url_du_livre_a_extraire)
-    livre_a_extraire = {}
+    logger.info("[DEBUT]extract_info_livre:%s", book_to_extract_url)
+    page = requests.get(book_to_extract_url)
+    book_to_extract = {}
 
     if page.ok:
-        livre_a_extraire['product_page_url'] = url_du_livre_a_extraire
+        book_to_extract['product_page_url'] = book_to_extract_url
         try:
             soup = BeautifulSoup(page.content, 'html.parser')
-            livre_a_extraire['upc'] = soup.find('th', string='UPC').find_next_sibling('td').string
-            livre_a_extraire['title'] = soup.find('h1').string
-            livre_a_extraire['price_including_tax'] = soup.find('th', string='Price (incl. tax)') \
+            book_to_extract['upc'] = soup.find('th', string='UPC').find_next_sibling('td').string
+            book_to_extract['title'] = soup.find('h1').string
+            book_to_extract['price_including_tax'] = soup.find('th', string='Price (incl. tax)') \
                 .find_next_sibling('td').string
-            livre_a_extraire['price_excluding_tax'] = soup.find('th', string='Price (excl. tax)') \
+            book_to_extract['price_excluding_tax'] = soup.find('th', string='Price (excl. tax)') \
                 .find_next_sibling('td').string
-            livre_a_extraire['number_available'] = soup.find('th', string='Availability') \
+            book_to_extract['number_available'] = soup.find('th', string='Availability') \
                 .find_next_sibling('td').string
-            livre_a_extraire['category'] = soup.find('ul', class_="breadcrumb") \
+            book_to_extract['category'] = soup.find('ul', class_="breadcrumb") \
                 .findAll("li")[-2].find("a").string
             if soup.find(id='product_description'):
-                livre_a_extraire['description'] = soup.find(id='product_description') \
+                book_to_extract['description'] = soup.find(id='product_description') \
                     .find_next_sibling('p').string
             else:
-                livre_a_extraire['description'] = ""
+                book_to_extract['description'] = ""
 
-            livre_a_extraire['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
-            livre_a_extraire['image_url'] = soup.find('div', class_='thumbnail') \
+            book_to_extract['review_rating'] = soup.find('p', class_='star-rating')['class'][1]
+            book_to_extract['image_url'] = soup.find('div', class_='thumbnail') \
                 .find('img')['src'] \
-                .replace('../..', extract_domaine(url_du_livre_a_extraire))
+                .replace('../..', extract_domain(book_to_extract_url))
         except AttributeError as erreur_extraction:
             raise ValueError("001:[extraction informations d'un livre]cette erreur se produit \n "
                              "soit parce que l'url de la page à extraire est erronée\n "
@@ -78,18 +75,18 @@ def extract_info_livre(url_du_livre_a_extraire):
             "002:[extraction informations d'un livre]cette erreur se produit au moment de "
             "l'extraction d'une page de type livre; la page demandée n'est pas accessible")
 
-    logger.info("[FIN]extract_info_livre:%s, infos:%s", url_du_livre_a_extraire, livre_a_extraire)
-    return livre_a_extraire
+    logger.info("[FIN]extract_info_livre:%s, infos:%s", book_to_extract_url, book_to_extract)
+    return book_to_extract
 
 
-def extract_urls_categorie(url_origine):
+def extract_urls_category(url_origine):
     """
     Extrait les urls des catégories de l'url du site transmis
     :param url_origine
     :type url_origine: str
     :return: urls_categorie : list
 
-    >>> len(extract_urls_categorie("http://books.toscrape.com/")) > 0
+    >>> len(extract_urls_category("http://books.toscrape.com/")) > 0
     True
 
     """
@@ -111,33 +108,33 @@ def extract_urls_categorie(url_origine):
     return urls_categorie
 
 
-def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
+def reforme_url(url, num_page_active):
+    url_split = url.split('/')
+    url_split = url_split[0:7]
+    url_split.append('page-' + str(num_page_active) + ".html")
+    url = "/".join(url_split)
+    return url
+
+
+def extract_book_url_by_category(books_to_extract_category_url):
     """
      Extraction des urls des livres d'une catégorie
 
-    :param url_categorie_des_livres_a_extraire
-    :type url_categorie_des_livres_a_extraire:str
+    :param books_to_extract_category_url
+    :type books_to_extract_category_url:str
     :returns
-    urls_livres list
+    books_url list
 
-    >>> len(extraire_urls_livres_par_categorie(
-    ... "https://books.toscrape.com/catalogue/category/books/mystery_3/index.html")) > 0
+    >>> len(extract_book_url_by_category("https://books.toscrape.com/catalogue/category/books/mystery_3/index.html")) > 0
     True
 
     """
 
-    def reforme_url(url, num_page_active):
-        url_split = url.split('/')
-        url_split = url_split[0:7]
-        url_split.append('page-' + str(num_page_active) + ".html")
-        url = "/".join(url_split)
-        return url
-
     num_page = 1
 
-    urls_livres = []
-    page = requests.get(url_categorie_des_livres_a_extraire)
-    logger.info("[DEBUT]extract_urls_livre_par_catégorie:%s", url_categorie_des_livres_a_extraire)
+    books_url = []
+    page = requests.get(books_to_extract_category_url)
+    logger.info("[DEBUT]extract_urls_livre_par_catégorie:%s", books_to_extract_category_url)
     if not page.ok:
         raise ValueError(
             "004:[extraction urls des livres d'une page categorie]cette erreur se produit "
@@ -149,15 +146,15 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
             links = soup.find_all("h3")
 
             for link in links:
-                urls_livres.append(
+                books_url.append(
                     link.find("a")['href'].replace("../../..",
-                                                   extract_domaine(
-                                                       url_categorie_des_livres_a_extraire)
+                                                   extract_domain(
+                                                       books_to_extract_category_url)
                                                    + "/catalogue"))
             logger.info("[EN COURS]extract_urls_livre_par_catégorie page %s "
-                        "nombre de livres total:%s", num_page, str(len(urls_livres)))
+                        "nombre de livres total:%s", num_page, str(len(books_url)))
             num_page += 1
-            url_reforme = reforme_url(url_categorie_des_livres_a_extraire, num_page)
+            url_reforme = reforme_url(books_to_extract_category_url, num_page)
             page = requests.get(url_reforme)
             logger.info("[FIN]extract_urls_livre_par_catégorie:%s", url_reforme)
 
@@ -167,54 +164,54 @@ def extraire_urls_livres_par_categorie(url_categorie_des_livres_a_extraire):
                 "soit la page a évoluée, soit l'url de la page à extraire est erronée "
                 "et/ou ne concerne pas une page catégorie") from erreur_extraction
 
-    return urls_livres
+    return books_url
 
 
-def extract_info_livres_par_categorie(url_categorie_livres_a_extraire):
+def extract_book_datas_by_category(books_to_extract_category_url):
     """
-    Extrait les informations concernant des livres correspondant aux urls transmises
-    :param url_categorie_livres_a_extraire: list
+    Extracts datas about books corresponding to the urls transmitted
+    :param books_to_extract_category_url: list
     :return: livres_a_extraire: list
     """
-    url_livres = extraire_urls_livres_par_categorie(url_categorie_livres_a_extraire)
+    url_livres = extract_book_url_by_category(books_to_extract_category_url)
     livres_a_extraire = []
     for url in url_livres:
-        livres_a_extraire.append(extract_info_livre(url))
+        livres_a_extraire.append(extract_datas_book(url))
     return livres_a_extraire
 
 
-def extract_all(url_origine):
+def extract_all(url_origin = DOMAIN):
     """
-    Génère les fichiers csv de l'ensemble des livres; avec un fichier csv par catégorie de livre
-    :param url_origine: str
-    :return: livres_extraits list
+    Extract book datas of all books
+    :param url_origin: str
+    :return: extract_books list
     """
-    logger.info("[DEBUT]extraction intégral de:%s", url_origine)
-    urls_categorie = extract_urls_categorie(url_origine)
-    livres_extraits = []
-    for url in urls_categorie:
-        livres_extraits.extend(extract_info_livres_par_categorie(url))
-    logger.info("[FIN]extraction intégral de:%s", url_origine)
-    return livres_extraits
+    logger.info("[DEBUT]extraction intégral de:%s", url_origin)
+    urls_category = extract_urls_category(url_origin)
+    extract_books = []
+    for url in urls_category:
+        extract_books.extend(extract_book_url_by_category(url))
+    logger.info("[FIN]extraction intégral de:%s", url_origin)
+    return extract_books
 
 
-def extract_image(url_de_l_image, path, nom_fichier):
+def extract_image(image_url, path, file_name):
     """
-    Télécharge l'image correspondant à l'url_image
-    :param url_de_l_image: str
+    Tdownload the image corresponding to the url_image
+    :param image_url: str
     :param path: str
-    :param nom_fichier: str
+    :param file_name: str
     :return: none
     """
-    logger.info("[DEBUT]Télécharger image, chemin %s nom fichier %s", path, nom_fichier)
+    logger.info("[DEBUT]Télécharger image, chemin %s nom fichier %s", path, file_name)
     path_exist = os.path.exists(path)
     if not path_exist:
         os.makedirs(path)
-    page = requests.get(url_de_l_image, stream=True)
+    page = requests.get(image_url, stream=True)
     if page.ok:
         page.raw.decode_content = True
 
-        with open(path + nom_fichier, 'wb') as fichier_image:
+        with open(path + file_name, 'wb') as fichier_image:
             shutil.copyfileobj(page.raw, fichier_image)
-    logger.info("[FIN]Télécharger image %s chemin %s nom fichier %s", url_de_l_image,
-                path, nom_fichier)
+    logger.info("[FIN]Télécharger image %s chemin %s nom fichier %s", image_url,
+                path, file_name)
