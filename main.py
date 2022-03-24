@@ -37,8 +37,8 @@ def main():
     if args.url and (args.impact is None):
         parser.error("--url requiert --impact.")
 
-    if args.csv and (args.impact is None or args.url is None):
-        parser.error("--csv requiert --impact et --url.")
+    if args.csv and ((args.impact is None or args.url is None) and not args.all):
+        parser.error("--csv requiert --impact et --url, or --all.")
 
     if args.impact and (args.url is None):
         parser.error("--impact requiert --url.")
