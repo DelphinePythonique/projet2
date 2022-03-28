@@ -33,7 +33,8 @@ def extract_book_datas(book_to_extract_url):
     :return: book_to_extract: book's datas dict
     :rtype:  dict
 
-    >>> len(extract_book_datas("https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")) > 0
+    >>> len(extract_book_datas("https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/" \
+    "index.html")) > 0
     True
     """
 
@@ -78,33 +79,33 @@ def extract_book_datas(book_to_extract_url):
     return book_to_extract
 
 
-def extract_urls_category(url_origine):
+def extract_urls_category(url_origin):
     """
     Extrait les urls des catégories de l'url du site transmis
-    :param url_origine
-    :type url_origine: str
-    :return: urls_categorie : list
+    :param url_origin
+    :type url_origin: str
+    :return: urls_categories : list
 
     >>> len(extract_urls_category("http://books.toscrape.com/")) > 0
     True
 
     """
-    page = requests.get(url_origine)
+    page = requests.get(url_origin)
     if page.ok:
-        logger.info("[BEGIN]export urls of categories from url %s", url_origine)
+        logger.info("[BEGIN]export urls of categories from url %s", url_origin)
         soup = BeautifulSoup(page.content, "html.parser")
         links = soup.find('div', class_="side_categories").find_all('a')
         links.pop(0)  # delete of parent category Books
-        urls_categorie = []
+        urls_categories = []
         for link in links:
-            urls_categorie.append(url_origine + "/" + link['href'])
+            urls_categories.append(url_origin + "/" + link['href'])
         logger.info("[END]export urls of catégories from url %s "
-                    "of %s catégories", url_origine, len(urls_categorie))
+                    "of %s catégories", url_origin, len(urls_categories))
 
     else:
         raise ValueError("005:[extract urls of categories]this error occurs "
                          "when requested page is not accessible")
-    return urls_categorie
+    return urls_categories
 
 
 def reforme_url(url, num_page_active):
@@ -124,7 +125,8 @@ def extract_book_url_by_category(books_to_extract_category_url):
     :returns
     books_url list
 
-    >>> len(extract_book_url_by_category("https://books.toscrape.com/catalogue/category/books/mystery_3/index.html")) > 0
+    >>> len(extract_book_url_by_category("https://books.toscrape.com/catalogue/category/books/" \
+    "mystery_3/index.html")) > 0
     True
 
     """
@@ -156,11 +158,11 @@ def extract_book_url_by_category(books_to_extract_category_url):
             page = requests.get(url_reforme)
             logger.info("[FIN]extract_urls_livre_par_catégorie:%s", url_reforme)
 
-        except AttributeError as erreur_extraction:
+        except AttributeError as extract_error:
             raise ValueError(
                 "003:[extraction urls des livres d'une page category]this error occurs "
                 "if page has evolved, or if page's url is wrong "
-                "et/ou ne concerne pas une page catégorie") from erreur_extraction
+                "et/ou ne concerne pas une page catégorie") from extract_error
 
     return books_url
 
@@ -169,13 +171,10 @@ def extract_book_datas_by_category(books_to_extract_category_url):
     """
     Extracts datas about books corresponding to the urls transmitted
     :param books_to_extract_category_url: list
-    :return: livres_a_extraire: list
+    :return: book_to_extract: list
     """
     url_livres = extract_book_url_by_category(books_to_extract_category_url)
-    livres_a_extraire = []
-    for url in url_livres:
-        livres_a_extraire.append(extract_book_datas(url))
-    return livres_a_extraire
+    return [extract_book_datas(url) for url in url_livres]
 
 
 def extract_all(url_origin = DOMAIN):

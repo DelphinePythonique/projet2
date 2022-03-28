@@ -84,6 +84,8 @@ Add option --csv to generate a csv file in the data directory per category
 ```
 
 #### Download et save book's image in data/images directory
+*Before to execute this command, you must ensure to have download csv files;
+indeed, this command is based on the images's urls present in the files.*
 Enter the following command
 ``` bash
  python main.py --images
