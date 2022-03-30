@@ -46,11 +46,12 @@ Position yourself in the local directory in which you want to position the sourc
  python -m venv env
 ```
 - Activate virtual environment
-If OS is Debian Linux: 
+
+   If OS is Debian Linux: 
 ``` bash
  source env/bin/activate
 ```
-If OS is Windows:
+   If OS is Windows:
 ``` bash
  .\env\Scripts\activate
 ```
