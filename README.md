@@ -42,7 +42,7 @@ Position yourself in the local directory in which you want to position the sourc
 - Position yourself in the project directory, create and activate a virtual environment
 
 ``` bash
- cd projet
+ cd projet2
  python -m venv env
  source env/bin/activate
 ```
