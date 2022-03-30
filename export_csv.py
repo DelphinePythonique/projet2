@@ -35,7 +35,7 @@ def export_csv(elements, grouped_by):
             grouped_elements = list(value)
             en_tete = list(grouped_elements[0].keys())
 
-            with open(file_name, "w", encoding="utf-8") as csv_file:
+            with open(file_name, "w", encoding="utf-8", newline='') as csv_file:
                 writer = csv.writer(csv_file, delimiter=",")
                 writer.writerow(en_tete)
                 for grouped_element in grouped_elements:
