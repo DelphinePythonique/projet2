@@ -26,7 +26,7 @@ Prerequisite:
 
 - \>= python3,9
 
-Through a terminal : 
+Through a terminal(Debian linux) or Powershell(Windows) : 
 
 Position yourself in the local directory in which you want to position the sources of the application
 ``` bash
@@ -39,12 +39,20 @@ Position yourself in the local directory in which you want to position the sourc
  git clone git@github.com:DelphinePythonique/projet2.git
 ```
 
-- Position yourself in the project directory, create and activate a virtual environment
+- Position yourself in the project directory, create a virtual environment
 
 ``` bash
  cd projet2
  python -m venv env
+```
+- Activate virtual environment
+If OS is Debian Linux: 
+``` bash
  source env/bin/activate
+```
+If OS is Windows:
+``` bash
+ .\env\Scripts\activate
 ```
 - Install the python packages useful for the script
 ``` bash
