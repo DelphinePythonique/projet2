@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 from log import logger
 
-DOMAIN = "https://books.toscrape.com/"
+DOMAIN = "https://books.toscrape.com"
 
 def extract_domain(url):
     """

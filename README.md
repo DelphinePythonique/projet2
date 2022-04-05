@@ -5,7 +5,7 @@ Ultimately, our goal will be to track book prices at
 [Book To Scrape](http://books.toscrape.com/), an online bookstore
 . 
 
-version: 1.7.1
+version: 1.7.2
 
 ## Summary
 
